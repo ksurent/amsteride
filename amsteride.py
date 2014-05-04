@@ -15,7 +15,7 @@ class Loader (dict):
             self[name] = self.load(path)
 
 class Images (Loader):
-    names = [ 'road.png', 'cake.png', 'biker.png' ]
+    names = [ 'road.png', 'cake.png', 'biker.png', 'gull.png' ]
 
     def load(self, path):
         return pygame.image.load(path)
@@ -102,14 +102,13 @@ class Rider:
 
 
 ##############################################################################
-class Item:
+class Item (object):
     def __init__(self, disp, x, y):
         self.disp = disp
         self.is_alive = True
-        self.cost = 5
         self.x = x
         self.y = y
-        self.img = image_cache["cake.png"]
+        self.img = image_cache[self.sprite_name]
         self.img_w, self.img_h = self.img.get_size()
 
     def bbox(self):
@@ -117,13 +116,6 @@ class Item:
 
     def rect(self):
         return pygame.Rect(self.bbox())
-
-    def collide(self, rider):
-        if not self.is_alive:
-            return
-        self.is_alive = False
-        rider.add_score(self.cost)
-        sound_cache['pickup.wav'].play()
 
     def update(self):
         pass
@@ -135,6 +127,26 @@ class Item:
         if screen_x < - self.img_w:
             self.is_alive = False
 
+class Bonus (Item):
+    sprite_name = 'cake.png'
+
+    def __init__(self, disp, x, y):
+        super(Bonus, self).__init__(disp, x, y)
+        self.cost = 5
+
+    def collide(self, rider):
+        if not self.is_alive:
+            return
+        self.is_alive = False
+        rider.add_score(self.cost)
+        sound_cache['pickup.wav'].play()
+
+
+class Obstacle (Item):
+    sprite_name = 'gull.png'
+
+    def collide(self, rider):
+        print 'Kaboom'
 
 ##############################################################################
 class Road:
@@ -157,6 +169,7 @@ class Road:
 
 ##############################################################################
 class ItemGenerator:
+    items = [ Bonus, Obstacle ]
     def __init__(self, disp):
         self.disp = disp
         self.next_x = 1158
@@ -166,7 +179,7 @@ class ItemGenerator:
             return None
         self.next_x = x + 300
         y = random.randint(from_y, to_y)
-        return Item(self.disp, x, y)
+        return random.choice(self.items)(self.disp, x, y)
 
 
 ##############################################################################
