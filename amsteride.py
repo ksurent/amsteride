@@ -43,10 +43,13 @@ class Rider:
             self.y = Road.HEIGHT
 
     def speed_up(self):
-        self.speed = 15
+        self.speed = 30
 
     def slow_down(self):
-        self.speed = 5
+        self.speed = 1
+
+    def normal_speed(self):
+        self.speed = 10
 
     def update(self):
         self.x += self.speed
@@ -101,6 +104,8 @@ while is_running:
         rider.up()
     if keys[K_DOWN]:
         rider.down()
+
+    rider.normal_speed()
     if keys[K_RIGHT]:
         rider.speed_up()
     if keys[K_LEFT]:
