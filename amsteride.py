@@ -2,8 +2,8 @@ import pygame
 from pygame.locals import *
 
 FPS = 60
-WIDTH = 640
-HEIGHT = 480
+WIDTH = 800
+HEIGHT = 600
 
 
 ##############################################################################
@@ -27,8 +27,10 @@ class Rider:
     def __init__(self, disp):
         self.disp = disp
         self.x = 0
-        self.y = 240
+        self.y = Road.HEIGHT / 2
         self.speed = 10
+        self.img = pygame.image.load("assets/biker.png")
+        self.img_w, self.img_h = self.img.get_size()
 
     def up(self):
         self.y -= 5
@@ -37,8 +39,8 @@ class Rider:
 
     def down(self):
         self.y += 5
-        if self.y > HEIGHT:
-            self.y = HEIGHT
+        if self.y > Road.HEIGHT:
+            self.y = Road.HEIGHT
 
     def speed_up(self):
         self.speed = 15
@@ -50,11 +52,13 @@ class Rider:
         self.x += self.speed
 
     def draw(self, screen_x, screen_y):
-        pygame.draw.circle(self.disp, (255, 190, 0), (screen_x, screen_y), 40)
+        self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
 
 
 ##############################################################################
 class Road:
+    HEIGHT = 300
+
     def __init__(self, disp):
         self.disp = disp
         self.x = 0
