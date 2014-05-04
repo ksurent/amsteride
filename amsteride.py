@@ -142,6 +142,7 @@ is_running = True
 
 clock = pygame.time.Clock()
 
+# TODO preload images
 SND_PICKUP = pygame.mixer.Sound("assets/pickup.wav")
 
 camera = Camera()
@@ -184,6 +185,8 @@ while is_running:
     clashed = rider.rect().collidedictall({i.bbox(): i for i in items})
     for _, item in clashed:
         item.collide(rider)
+
+    # TODO clean up items
 
     disp.fill((200, 255, 255))
     camera.draw(road)
