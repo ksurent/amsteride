@@ -16,7 +16,7 @@ class Camera:
 
     def follow(self, target):
         self.x = target.x - int(self.w * 0.2)
-        self.y = target.y - int(self.h * 0.5)
+        self.y = - int(self.h * 0.4)
 
     def draw(self, obj):
         obj.draw(obj.x - self.x, obj.y - self.y)
@@ -31,12 +31,12 @@ class Rider:
         self.speed = 10
 
     def up(self):
-        self.y -= 1
+        self.y -= 5
         if self.y < 0:
             self.y = 0
 
     def down(self):
-        self.y += 1
+        self.y += 5
         if self.y > HEIGHT:
             self.y = HEIGHT
 
