@@ -7,26 +7,47 @@ HEIGHT = 480
 
 
 ##############################################################################
-class Sun:
+class Rider:
     def __init__(self, disp):
         self._disp = disp
         self._x = 0
         self._y = 240
+        self._speed = 100
 
-    def move(self, step):
-        self._y = self._y + step
-        if self._y > HEIGHT:
-            self._y = HEIGHT
-        elif self._y < 0:
+    def up(self):
+        self._y -= 1
+        if self._y < 0:
             self._y = 0
 
+    def down(self):
+        self._y += 1
+        if self._y > HEIGHT:
+            self._y = HEIGHT
+
+    def speed_up(self):
+        self._speed = 120
+
+    def slow_down(self):
+        self._speed = 80
+
     def update(self):
-        self._x = self._x + 1
-        if self._x > WIDTH:
-            self._x = 0
+        self._x += self._speed
 
     def draw(self):
-        pygame.draw.circle(self._disp, (255, 190, 0), (self._x, self._y), 40)
+        pygame.draw.circle(self._disp, (255, 190, 0), (600, self._y), 40)
+
+
+##############################################################################
+class Road:
+    def __init__(self, disp):
+        self._disp = disp
+        self._img = pygame.image.load("assets/road.png")
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self._disp.blit(self._img, (100, 100))
 
 
 ##############################################################################
@@ -38,7 +59,8 @@ is_running = True
 
 clock = pygame.time.Clock()
 
-sun = Sun(disp)
+rider = Rider(disp)
+road = Road(disp)
 
 while is_running:
     for event in pygame.event.get():
@@ -51,13 +73,19 @@ while is_running:
     keys = pygame.key.get_pressed()
 
     if keys[K_UP]:
-        sun.move(-1)
+        rider.up()
     if keys[K_DOWN]:
-        sun.move(1)
+        rider.down()
+    if keys[K_RIGHT]:
+        rider.speed_up()
+    if keys[K_LEFT]:
+        rider.slow_down()
 
-    sun.update()
+    road.update()
+    rider.update()
 
     disp.fill(0)
-    sun.draw()
+    road.draw()
+    rider.draw()
     pygame.display.update()
     clock.tick(FPS)
