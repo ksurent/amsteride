@@ -187,8 +187,7 @@ while is_running:
 
     disp.fill((200, 255, 255))
     camera.draw(road)
-    camera.draw(rider)
-    for i in items:
+    for i in sorted([rider] + items, key=lambda o: o.y):
         camera.draw(i)
     pygame.display.update()
     clock.tick(FPS)
