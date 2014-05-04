@@ -7,47 +7,67 @@ HEIGHT = 480
 
 
 ##############################################################################
+class Camera:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.w = WIDTH
+        self.h = HEIGHT
+
+    def follow(self, target):
+        self.x = target.x - int(self.w * 0.2)
+        self.y = target.y - int(self.h * 0.5)
+
+    def draw(self, obj):
+        obj.draw(obj.x - self.x, obj.y - self.y)
+
+
+##############################################################################
 class Rider:
     def __init__(self, disp):
-        self._disp = disp
-        self._x = 0
-        self._y = 240
-        self._speed = 100
+        self.disp = disp
+        self.x = 0
+        self.y = 240
+        self.speed = 10
 
     def up(self):
-        self._y -= 1
-        if self._y < 0:
-            self._y = 0
+        self.y -= 1
+        if self.y < 0:
+            self.y = 0
 
     def down(self):
-        self._y += 1
-        if self._y > HEIGHT:
-            self._y = HEIGHT
+        self.y += 1
+        if self.y > HEIGHT:
+            self.y = HEIGHT
 
     def speed_up(self):
-        self._speed = 120
+        self.speed = 15
 
     def slow_down(self):
-        self._speed = 80
+        self.speed = 5
 
     def update(self):
-        self._x += self._speed
+        self.x += self.speed
 
-    def draw(self):
-        pygame.draw.circle(self._disp, (255, 190, 0), (600, self._y), 40)
+    def draw(self, screen_x, screen_y):
+        pygame.draw.circle(self.disp, (255, 190, 0), (screen_x, screen_y), 40)
 
 
 ##############################################################################
 class Road:
     def __init__(self, disp):
-        self._disp = disp
-        self._img = pygame.image.load("assets/road.png")
+        self.disp = disp
+        self.x = 0
+        self.y = 0
+        self.img = pygame.image.load("assets/road.png")
+        self.img_w, self.img_h = self.img.get_size()
 
     def update(self):
         pass
 
-    def draw(self):
-        self._disp.blit(self._img, (100, 100))
+    def draw(self, screen_x, screen_y):
+        self.disp.blit(self.img, (screen_x % self.img_w - self.img_w, screen_y))
+        self.disp.blit(self.img, (screen_x % self.img_w, screen_y))
 
 
 ##############################################################################
@@ -59,6 +79,7 @@ is_running = True
 
 clock = pygame.time.Clock()
 
+camera = Camera()
 rider = Rider(disp)
 road = Road(disp)
 
@@ -83,9 +104,10 @@ while is_running:
 
     road.update()
     rider.update()
+    camera.follow(rider)
 
     disp.fill(0)
-    road.draw()
-    rider.draw()
+    camera.draw(road)
+    camera.draw(rider)
     pygame.display.update()
     clock.tick(FPS)
