@@ -1,3 +1,4 @@
+import os.path
 import pygame
 from pygame.locals import *
 import random
@@ -6,6 +7,28 @@ FPS = 60
 WIDTH = 800
 HEIGHT = 600
 
+class Loader (dict):
+    prefix = 'assets'
+    def load_all(self):
+        for name in self.names:
+            path = os.path.join(self.prefix, name)
+            self[name] = self.load(path)
+
+class Images (Loader):
+    names = [ 'road.png', 'cake.png', 'biker.png' ]
+
+    def load(self, path):
+        return pygame.image.load(path)
+
+image_cache = Images()
+
+class Sounds (Loader):
+    names = [ 'pickup.wav' ]
+
+    def load(self, path):
+        return pygame.mixer.Sound(path)
+
+sound_cache = Sounds()
 
 ##############################################################################
 class Camera:
@@ -40,7 +63,7 @@ class Rider:
         self.y = Road.HEIGHT / 2
         self.speed = 5
         self.score = 0
-        self.img = pygame.image.load("assets/biker.png")
+        self.img = image_cache["biker.png"]
         self.img_w, self.img_h = self.img.get_size()
 
     def up(self):
@@ -86,7 +109,7 @@ class Item:
         self.cost = 5
         self.x = x
         self.y = y
-        self.img = pygame.image.load("assets/cake.png")
+        self.img = image_cache["cake.png"]
         self.img_w, self.img_h = self.img.get_size()
 
     def bbox(self):
@@ -100,7 +123,7 @@ class Item:
             return
         self.is_alive = False
         rider.add_score(self.cost)
-        SND_PICKUP.play()
+        sound_cache['pickup.wav'].play()
 
     def update(self):
         pass
@@ -118,7 +141,7 @@ class Road:
         self.disp = disp
         self.x = 0
         self.y = 0
-        self.img = pygame.image.load("assets/road.png")
+        self.img = image_cache["road.png"]
         self.img_w, self.img_h = self.img.get_size()
 
     def update(self):
@@ -148,13 +171,15 @@ pygame.init()
 
 disp = pygame.display.set_mode((WIDTH, HEIGHT))
 
+image_cache.load_all()
+sound_cache.load_all()
+
 is_running = True
 
 clock = pygame.time.Clock()
 
 # TODO preload images
 FNT_SCORE = pygame.font.Font(pygame.font.get_default_font(), 12)
-SND_PICKUP = pygame.mixer.Sound("assets/pickup.wav")
 
 camera = Camera()
 item_gen = ItemGenerator(disp)
