@@ -166,7 +166,7 @@ hud = HUD(disp, rider)
 
 while is_running:
     for event in pygame.event.get():
-        if event.type == QUIT:
+        if event.type == QUIT or event.type == KEYDOWN and event.key == K_ESCAPE:
             is_running = False
         elif 1:
             # no-op
