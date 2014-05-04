@@ -28,6 +28,7 @@ class Rider:
         self.x = 0
         self.y = Road.HEIGHT / 2
         self.speed = 5
+        self.score = 0
         self.img = pygame.image.load("assets/biker.png")
         self.img_w, self.img_h = self.img.get_size()
 
@@ -50,6 +51,15 @@ class Rider:
     def normal_speed(self):
         self.speed = 5
 
+    def add_score(self, cost):
+        self.score += cost
+
+    def bbox(self):
+        return (self.x, self.y - 10 + 5, self.img_w, 10)
+
+    def rect(self):
+        return pygame.Rect(self.bbox())
+
     def update(self):
         self.x += self.speed
 
@@ -61,16 +71,32 @@ class Rider:
 class Item:
     def __init__(self, disp, x, y):
         self.disp = disp
+        self.is_alive = True
+        self.cost = 5
         self.x = x
         self.y = y
         self.img = pygame.image.load("assets/cake.png")
         self.img_w, self.img_h = self.img.get_size()
 
+    def bbox(self):
+        return (self.x, self.y - 10 + 5, self.img_w, 10)
+
+    def rect(self):
+        return pygame.Rect(self.bbox())
+
+    def collide(self, rider):
+        if not self.is_alive:
+            return
+        self.is_alive = False
+        rider.add_score(self.cost)
+        return
+
     def update(self):
         pass
 
     def draw(self, screen_x, screen_y):
-        self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
+        if self.is_alive:
+            self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
 
 
 ##############################################################################
@@ -151,6 +177,10 @@ while is_running:
     for i in items:
         i.update()
     camera.follow(rider)
+
+    clashed = rider.rect().collidedictall({i.bbox(): i for i in items})
+    for _, item in clashed:
+        item.collide(rider)
 
     disp.fill((200, 255, 255))
     camera.draw(road)
