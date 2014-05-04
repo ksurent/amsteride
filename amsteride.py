@@ -181,7 +181,6 @@ is_running = True
 
 clock = pygame.time.Clock()
 
-# TODO preload images
 FNT_SCORE = pygame.font.Font(pygame.font.get_default_font(), 12)
 
 camera = Camera()
