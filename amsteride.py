@@ -132,6 +132,9 @@ class Item:
         if self.is_alive:
             self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
 
+        if screen_x < - self.img_w:
+            self.is_alive = False
+
 
 ##############################################################################
 class Road:
@@ -220,7 +223,7 @@ while is_running:
     for _, item in clashed:
         item.collide(rider)
 
-    # TODO clean up items
+    items = [item for item in items if item.is_alive]
 
     disp.fill((200, 255, 255))
     camera.draw(road)
