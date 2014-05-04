@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 
 FPS = 60
 WIDTH = 800
@@ -28,7 +29,7 @@ class Rider:
         self.disp = disp
         self.x = 0
         self.y = Road.HEIGHT / 2
-        self.speed = 10
+        self.speed = 5
         self.img = pygame.image.load("assets/biker.png")
         self.img_w, self.img_h = self.img.get_size()
 
@@ -49,10 +50,26 @@ class Rider:
         self.speed = 1
 
     def normal_speed(self):
-        self.speed = 10
+        self.speed = 5
 
     def update(self):
         self.x += self.speed
+
+    def draw(self, screen_x, screen_y):
+        self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
+
+
+##############################################################################
+class Item:
+    def __init__(self, disp, x, y):
+        self.disp = disp
+        self.x = x
+        self.y = y
+        self.img = pygame.image.load("assets/cake.png")
+        self.img_w, self.img_h = self.img.get_size()
+
+    def update(self):
+        pass
 
     def draw(self, screen_x, screen_y):
         self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
@@ -78,6 +95,23 @@ class Road:
 
 
 ##############################################################################
+class ItemGenerator:
+    def __init__(self, disp):
+        self.disp = disp
+        self.countdown = 100
+
+    def gimme_maybe(self, from_x, to_x, from_y, to_y):
+        self.countdown -= 1
+        if self.countdown:
+            return None
+        else:
+            self.countdown = 100
+            x = random.randint(from_x, to_x)
+            y = random.randint(from_y, to_y)
+            return Item(self.disp, x, y)
+
+
+##############################################################################
 pygame.init()
 
 disp = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -87,8 +121,10 @@ is_running = True
 clock = pygame.time.Clock()
 
 camera = Camera()
+item_gen = ItemGenerator(disp)
 rider = Rider(disp)
 road = Road(disp)
+items = []
 
 while is_running:
     for event in pygame.event.get():
@@ -111,12 +147,20 @@ while is_running:
     if keys[K_LEFT]:
         rider.slow_down()
 
+    item_maybe = item_gen.gimme_maybe(camera.x + WIDTH, camera.x + WIDTH, 0, Road.HEIGHT)
+    if item_maybe != None:
+        items.append(item_maybe)
+
     road.update()
     rider.update()
+    for i in items:
+        i.update()
     camera.follow(rider)
 
-    disp.fill(0)
+    disp.fill((200, 255, 255))
     camera.draw(road)
     camera.draw(rider)
+    for i in items:
+        camera.draw(i)
     pygame.display.update()
     clock.tick(FPS)
