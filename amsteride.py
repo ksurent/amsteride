@@ -15,7 +15,7 @@ class Loader (dict):
             self[name] = self.load(path)
 
 class Images (Loader):
-    names = [ 'road.png', 'cake.png', 'biker.png', 'gull.png' ]
+    names = [ 'road.png', 'cake.png', 'biker.01.png', 'biker.02.png', 'gull.png' ]
 
     def load(self, path):
         return pygame.image.load(path)
@@ -57,13 +57,18 @@ class HUD:
 
 ##############################################################################
 class Rider:
+    FRAME_DURATION = 30
+
     def __init__(self, disp):
         self.disp = disp
         self.x = 0
         self.y = Road.HEIGHT / 2
         self.speed = 5
         self.score = 0
-        self.img = image_cache["biker.png"]
+        self.imgs = (image_cache["biker.01.png"], image_cache["biker.02.png"])
+        self.frame_idx = 0
+        self.frame_dur = 0
+        self.img = self.imgs[self.frame_idx]
         self.img_w, self.img_h = self.img.get_size()
 
     def up(self):
@@ -96,6 +101,12 @@ class Rider:
 
     def update(self):
         self.x += self.speed
+        self.frame_dur += 1
+        if self.frame_dur == self.FRAME_DURATION:
+            self.frame_dur = 0
+            self.frame_idx += 1
+            self.frame_idx %= len(self.imgs)
+            self.img = self.imgs[self.frame_idx]
 
     def draw(self, screen_x, screen_y):
         self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
