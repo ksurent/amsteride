@@ -98,17 +98,14 @@ class Road:
 class ItemGenerator:
     def __init__(self, disp):
         self.disp = disp
-        self.countdown = 100
+        self.next_x = 1158
 
-    def gimme_maybe(self, from_x, to_x, from_y, to_y):
-        self.countdown -= 1
-        if self.countdown:
+    def gimme_maybe(self, x, from_y, to_y):
+        if self.next_x > x:
             return None
-        else:
-            self.countdown = 100
-            x = random.randint(from_x, to_x)
-            y = random.randint(from_y, to_y)
-            return Item(self.disp, x, y)
+        self.next_x = x + 300
+        y = random.randint(from_y, to_y)
+        return Item(self.disp, x, y)
 
 
 ##############################################################################
@@ -147,7 +144,7 @@ while is_running:
     if keys[K_LEFT]:
         rider.slow_down()
 
-    item_maybe = item_gen.gimme_maybe(camera.x + WIDTH, camera.x + WIDTH, 0, Road.HEIGHT)
+    item_maybe = item_gen.gimme_maybe(camera.x + WIDTH, 0, Road.HEIGHT)
     if item_maybe != None:
         items.append(item_maybe)
 
