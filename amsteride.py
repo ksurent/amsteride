@@ -22,6 +22,17 @@ class Camera:
 
 
 ##############################################################################
+class HUD:
+    def __init__(self, disp, rider):
+        self.disp = disp
+
+    def draw(self):
+        score = FNT_SCORE.render("Score: %d" % rider.score, True, (255, 0, 0))
+        w, h = score.get_size()
+        self.disp.blit(score, (0, HEIGHT - h))
+
+
+##############################################################################
 class Rider:
     def __init__(self, disp):
         self.disp = disp
@@ -143,6 +154,7 @@ is_running = True
 clock = pygame.time.Clock()
 
 # TODO preload images
+FNT_SCORE = pygame.font.Font(pygame.font.get_default_font(), 12)
 SND_PICKUP = pygame.mixer.Sound("assets/pickup.wav")
 
 camera = Camera()
@@ -150,6 +162,7 @@ item_gen = ItemGenerator(disp)
 rider = Rider(disp)
 road = Road(disp)
 items = []
+hud = HUD(disp, rider)
 
 while is_running:
     for event in pygame.event.get():
@@ -192,5 +205,6 @@ while is_running:
     camera.draw(road)
     for i in sorted([rider] + items, key=lambda o: o.y):
         camera.draw(i)
+    hud.draw()
     pygame.display.update()
     clock.tick(FPS)
