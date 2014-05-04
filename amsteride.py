@@ -101,7 +101,6 @@ class Item:
         self.is_alive = False
         rider.add_score(self.cost)
         SND_PICKUP.play()
-        return
 
     def update(self):
         pass
