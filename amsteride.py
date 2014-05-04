@@ -89,6 +89,7 @@ class Item:
             return
         self.is_alive = False
         rider.add_score(self.cost)
+        SND_PICKUP.play()
         return
 
     def update(self):
@@ -140,6 +141,8 @@ disp = pygame.display.set_mode((WIDTH, HEIGHT))
 is_running = True
 
 clock = pygame.time.Clock()
+
+SND_PICKUP = pygame.mixer.Sound("assets/pickup.wav")
 
 camera = Camera()
 item_gen = ItemGenerator(disp)
