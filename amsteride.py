@@ -12,12 +12,10 @@ class Camera:
     def __init__(self):
         self.x = 0
         self.y = 0
-        self.w = WIDTH
-        self.h = HEIGHT
 
     def follow(self, target):
-        self.x = target.x - int(self.w * 0.2)
-        self.y = - int(self.h * 0.4)
+        self.x = target.x - int(WIDTH * 0.2)
+        self.y = - int(HEIGHT * 0.4)
 
     def draw(self, obj):
         obj.draw(obj.x - self.x, obj.y - self.y)
