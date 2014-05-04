@@ -15,7 +15,13 @@ class Loader (dict):
             self[name] = self.load(path)
 
 class Images (Loader):
-    names = [ 'road.png', 'cake.png', 'biker.01.png', 'biker.02.png', 'gull.png' ]
+    names = [
+        'road.png',
+        'shroom-red.png', 'shroom-blue.png',
+        'cake-red.png', 'cake-blue.png',
+        'biker.01.png', 'biker.02.png',
+        'gull.png',
+    ]
 
     def load(self, path):
         return pygame.image.load(path)
@@ -139,9 +145,10 @@ class Item (object):
             self.is_alive = False
 
 class Bonus (Item):
-    sprite_name = 'cake.png'
+    all_sprites = ('cake-red.png', 'cake-blue.png', 'shroom-red.png', 'shroom-blue.png')
 
     def __init__(self, disp, x, y):
+        self.sprite_name = self.all_sprites[random.randint(0, len(self.all_sprites) - 1)]
         super(Bonus, self).__init__(disp, x, y)
         self.cost = 5
 
