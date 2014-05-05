@@ -148,7 +148,7 @@ class Bonus (Item):
     all_sprites = ('cake-red.png', 'cake-blue.png', 'shroom-red.png', 'shroom-blue.png')
 
     def __init__(self, disp, x, y):
-        self.sprite_name = self.all_sprites[random.randint(0, len(self.all_sprites) - 1)]
+        self.sprite_name = random.choice(self.all_sprites)
         super(Bonus, self).__init__(disp, x, y)
         self.cost = 5
 
