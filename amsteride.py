@@ -55,18 +55,30 @@ class Camera:
 
 
 class HUD:
+    red = (255, 0, 0)
+    black = (0, 0, 0)
+
     def __init__(self, disp, rider):
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
         self.disp = disp
         self.rider = rider
 
     def draw(self):
         if self.rider.is_alive:
-            text = "Score: %d" % rider.score
-        else:
-            text = "YOU SUCK"
-        score = FNT_SCORE.render(text, True, (255, 0, 0))
+            self.draw_normal()
+        else:  # TODO no point in re-drawing the game over screen
+            self.draw_game_over()
+
+    def draw_normal(self):
+        score = self.font.render("Score: %d" % rider.score, True, self.red)
         w, h = score.get_size()
         self.disp.blit(score, (0, HEIGHT - h))
+
+    def draw_game_over(self):
+        self.disp.fill(self.black)
+        suck = self.font.render("YOU SUCK", True, self.red)
+        _, h = suck.get_size()
+        self.disp.blit(suck, (0, HEIGHT - h))  # (x, y) of the top-left corner
 
 
 class Rider:
@@ -222,8 +234,6 @@ is_running = True
 
 clock = pygame.time.Clock()
 
-FNT_SCORE = pygame.font.Font(pygame.font.get_default_font(), 12)
-
 camera = Camera()
 item_gen = ItemGenerator(disp)
 rider = Rider(disp)
@@ -236,6 +246,9 @@ while is_running:
         if event.type == QUIT or event.type == KEYDOWN \
            and event.key == K_ESCAPE:
             is_running = False
+
+    if not rider.is_alive:
+        continue
 
     keys = pygame.key.get_pressed()
 
