@@ -7,12 +7,15 @@ FPS = 60
 WIDTH = 800
 HEIGHT = 600
 
+
 class Loader (dict):
     prefix = 'assets'
+
     def load_all(self):
         for name in self.names:
             path = os.path.join(self.prefix, name)
             self[name] = self.load(path)
+
 
 class Images (Loader):
     names = [
@@ -28,15 +31,16 @@ class Images (Loader):
 
 image_cache = Images()
 
+
 class Sounds (Loader):
-    names = [ 'pickup.wav' ]
+    names = ['pickup.wav']
 
     def load(self, path):
         return pygame.mixer.Sound(path)
 
 sound_cache = Sounds()
 
-##############################################################################
+
 class Camera:
     def __init__(self):
         self.x = 0
@@ -50,7 +54,6 @@ class Camera:
         obj.draw(obj.x - self.x, obj.y - self.y)
 
 
-##############################################################################
 class HUD:
     def __init__(self, disp, rider):
         self.disp = disp
@@ -61,7 +64,6 @@ class HUD:
         self.disp.blit(score, (0, HEIGHT - h))
 
 
-##############################################################################
 class Rider:
     FRAME_DURATION = 30
 
@@ -118,7 +120,6 @@ class Rider:
         self.disp.blit(self.img, (screen_x, screen_y - self.img_h))
 
 
-##############################################################################
 class Item (object):
     def __init__(self, disp, x, y):
         self.disp = disp
@@ -144,8 +145,10 @@ class Item (object):
         if screen_x < - self.img_w:
             self.is_alive = False
 
+
 class Bonus (Item):
-    all_sprites = ('cake-red.png', 'cake-blue.png', 'shroom-red.png', 'shroom-blue.png')
+    all_sprites = ('cake-red.png', 'cake-blue.png',
+                   'shroom-red.png', 'shroom-blue.png')
 
     def __init__(self, disp, x, y):
         self.sprite_name = random.choice(self.all_sprites)
@@ -166,7 +169,7 @@ class Obstacle (Item):
     def collide(self, rider):
         print 'Kaboom'
 
-##############################################################################
+
 class Road:
     HEIGHT = 300
 
@@ -181,13 +184,15 @@ class Road:
         pass
 
     def draw(self, screen_x, screen_y):
-        self.disp.blit(self.img, (screen_x % self.img_w - self.img_w, screen_y))
-        self.disp.blit(self.img, (screen_x % self.img_w, screen_y))
+        img = self.img
+        w = self.img_w
+        self.disp.blit(img, (screen_x % w - w, screen_y))
+        self.disp.blit(img, (screen_x % w, screen_y))
 
 
-##############################################################################
 class ItemGenerator:
-    items = [ Bonus, Obstacle ]
+    items = [Bonus, Obstacle]
+
     def __init__(self, disp):
         self.disp = disp
         self.next_x = 1158
@@ -200,7 +205,6 @@ class ItemGenerator:
         return random.choice(self.items)(self.disp, x, y)
 
 
-##############################################################################
 pygame.init()
 
 disp = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -223,7 +227,8 @@ hud = HUD(disp, rider)
 
 while is_running:
     for event in pygame.event.get():
-        if event.type == QUIT or event.type == KEYDOWN and event.key == K_ESCAPE:
+        if event.type == QUIT or event.type == KEYDOWN
+        and event.key == K_ESCAPE:
             is_running = False
 
     keys = pygame.key.get_pressed()
@@ -240,7 +245,7 @@ while is_running:
         rider.slow_down()
 
     item_maybe = item_gen.gimme_maybe(camera.x + WIDTH, 0, Road.HEIGHT)
-    if item_maybe != None:
+    if item_maybe is not None:
         items.append(item_maybe)
 
     road.update()
