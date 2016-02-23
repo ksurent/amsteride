@@ -59,7 +59,9 @@ class HUD:
     black = (0, 0, 0)
 
     def __init__(self, disp, rider):
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
+        default_pygame_font = pygame.font.get_default_font()
+        self.font = pygame.font.Font(default_pygame_font, 12)
+        self.game_over_font = pygame.font.Font(default_pygame_font, 40)
         self.disp = disp
         self.rider = rider
 
@@ -76,9 +78,9 @@ class HUD:
 
     def draw_game_over(self):
         self.disp.fill(self.black)
-        suck = self.font.render("YOU SUCK", True, self.red)
-        _, h = suck.get_size()
-        self.disp.blit(suck, (0, HEIGHT - h))  # (x, y) of the top-left corner
+        suck = self.game_over_font.render("YOU SUCK", True, self.red)
+        w, _ = suck.get_size()
+        self.disp.blit(suck, (WIDTH / 2 - w / 2, HEIGHT / 2))
 
 
 class Rider:
