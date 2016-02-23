@@ -57,9 +57,14 @@ class Camera:
 class HUD:
     def __init__(self, disp, rider):
         self.disp = disp
+        self.rider = rider
 
     def draw(self):
-        score = FNT_SCORE.render("Score: %d" % rider.score, True, (255, 0, 0))
+        if self.rider.is_alive:
+            text = "Score: %d" % rider.score
+        else:
+            text = "YOU SUCK"
+        score = FNT_SCORE.render(text, True, (255, 0, 0))
         w, h = score.get_size()
         self.disp.blit(score, (0, HEIGHT - h))
 
@@ -78,6 +83,7 @@ class Rider:
         self.frame_dur = 0
         self.img = self.imgs[self.frame_idx]
         self.img_w, self.img_h = self.img.get_size()
+        self.is_alive = True
 
     def up(self):
         self.y -= 5
@@ -167,7 +173,7 @@ class Obstacle (Item):
     sprite_name = 'gull.png'
 
     def collide(self, rider):
-        print 'Kaboom'
+        rider.is_alive = False
 
 
 class Road:
@@ -227,8 +233,8 @@ hud = HUD(disp, rider)
 
 while is_running:
     for event in pygame.event.get():
-        if event.type == QUIT or event.type == KEYDOWN
-        and event.key == K_ESCAPE:
+        if event.type == QUIT or event.type == KEYDOWN \
+           and event.key == K_ESCAPE:
             is_running = False
 
     keys = pygame.key.get_pressed()
